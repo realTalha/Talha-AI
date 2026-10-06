@@ -71,17 +71,6 @@ FIRECRAWL_API_KEY=your_firecrawl_key_here  # Optional, for web search in Plan mo
 
 Talha AI is your personal AI coding assistant that can analyze, modify, and interact with your codebase through natural language commands.
 
-## Migration from Bun to Node.js
-
-This project was converted from Bun to Node.js/npm. Key changes:
-
-- Removed `@types/bun` dependency
-- Updated `tsconfig.json` for Node.js module resolution
-- Changed shebang from `#!/usr/bin/env bun` to `#!/usr/bin/env node`
-- Fixed all import paths to use `.js` extensions (required for ES modules in Node.js)
-- Added build step with TypeScript compiler
-- Updated package.json scripts for npm workflow
-
 ## Project Structure
 
 ```
