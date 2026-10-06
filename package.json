@@ -1,17 +1,39 @@
 {
   "name": "talha-ai",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "AI-powered CLI coding assistant with Agent, Ask, and Plan modes",
   "type": "module",
-  "private": true,
+  "keywords": ["ai", "cli", "coding-assistant", "openrouter", "agent", "typescript"],
+  "author": "Talha",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/realTalha/Talha-AI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/realTalha/Talha-AI/issues"
+  },
+  "homepage": "https://github.com/realTalha/Talha-AI#readme",
   "bin": {
-    "talha-ai": "./dist/index.js"
+    "talha-ai": "./dist/index.js",
+    "talha": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
+    "talha": "tsc && node dist/index.js",
     "dev": "tsc && node dist/index.js",
-    "wakeup": "npm run build && node dist/index.js wakeup"
+    "wakeup": "npm run build && node dist/index.js wakeup",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
   },
   "devDependencies": {
     "@types/diff": "^6.0.0",

@@ -104,41 +104,55 @@ const PLAN_INSTRUCTIONS = (codebase: string, hasWeb: boolean) =>
     "Keep it short: 1–15 steps.",
   ].join("\n");
 
-export async function generatePlan(goal: string) {
+export async function generatePlan(goal: string): Promise<Plan> {
   const config = defaultAgentConfig();
   const tracker = new ActionTracker();
   const executor = new ToolExecutor(tracker, config);
 
-
   const hasWeb = !!process.env.FIRECRAWL_API_KEY;
   const model = wrapLanguageModel({
-    model:getAgentModel(),
-    middleware:extractJsonMiddleware()
-  })
+    model: getAgentModel(),
+    middleware: extractJsonMiddleware()
+  });
 
-
-  const tools = { ...readOnlyTools(executor) , ...(hasWeb ? createWebTools(tracker) : {}) };
+  const tools = { ...readOnlyTools(executor), ...(hasWeb ? createWebTools(tracker) : {}) };
 
   console.log(chalk.cyan("\n🔍 Researching & drafting a plan…\n"));
 
-  const result = await generateText({
-    model,
-    tools,
-    stopWhen:stepCountIs(20),
-    system:PLAN_INSTRUCTIONS(config.codebasePath , hasWeb),
-    prompt:`User goal: \n${goal}`,
-    output:Output.object({schema:planSchema})
-  });
+  try {
+    const result = await generateText({
+      model,
+      tools,
+      stopWhen: stepCountIs(20),
+      system: PLAN_INSTRUCTIONS(config.codebasePath, hasWeb),
+      prompt: `User goal: \n${goal}`,
+      output: Output.object({ schema: planSchema })
+    });
 
-  const validated = planSchema.parse(result.output);
+    const validated = planSchema.parse(result.output);
 
-  const steps:PlanStep[] = validated.steps.map((s , i)=>({
-    id:`step-${i+1}`,
-    title:s.title,
-    description:s.description,
-    hints:s.hints,
-    complexity:s.complexity
-  }));
+    const steps: PlanStep[] = validated.steps.map((s, i) => ({
+      id: `step-${i + 1}`,
+      title: s.title,
+      description: s.description,
+      hints: s.hints,
+      complexity: s.complexity
+    }));
 
-  return {goal , researchSummary:validated.researchSummary , steps}
+    return { goal, researchSummary: validated.researchSummary, steps };
+  } catch (error) {
+    console.log(chalk.yellow("\n⚠️  AI returned invalid format. Creating simple plan...\n"));
+    
+    // Fallback: create a simple single-step plan
+    return {
+      goal,
+      researchSummary: "Plan generation failed, creating simple plan",
+      steps: [{
+        id: "step-1",
+        title: "Complete the goal",
+        description: goal,
+        complexity: "medium"
+      }]
+    };
+  }
 }

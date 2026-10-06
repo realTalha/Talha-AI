@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { confirm, isCancel, text } from "@clack/prompts";
+import { confirm, isCancel, text, spinner } from "@clack/prompts";
 import { ToolLoopAgent, stepCountIs } from "ai";
 import { getAgentModel } from '../../ai/ai.config.js';
 import { ActionTracker } from '../agent/action-tracker.js';
@@ -25,7 +25,12 @@ export async function runPlanMode(): Promise<void> {
   const goal = await text({ message: "What is your goal?" });
   if (isCancel(goal) || !goal.trim()) return;
 
+  const s = spinner();
+  s.start("📋 Generating plan...");
+
   const plan = await generatePlan(goal);
+
+  s.stop("✓ Plan ready!");
 
   printPlan(plan);
 
@@ -56,7 +61,12 @@ export async function runPlanMode(): Promise<void> {
       tools
     });
 
+    const stepSpinner = spinner();
+    stepSpinner.start(`Executing: ${step.title}`);
+
     const r = await agent.generate({prompt:stepPrompt(plan.goal , step)})
+
+    stepSpinner.stop(`✓ ${step.title} completed`);
 
     if(r.text) return console.log(renderTerminalMarkdown(r.text))
 

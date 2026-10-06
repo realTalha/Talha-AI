@@ -28,14 +28,14 @@ function printBannerWithShadow(ascii: string) {
 export async function runWakeup() {
     let ascii:string;
     try {
-        ascii = figlet.textSync("Talha" , {font:BANNER_FONT})
+        ascii = figlet.textSync("Talha AI" , {font:BANNER_FONT})
     } catch (error) {
-        ascii = figlet.textSync("Talha" , {font:"Standard"})
+        ascii = figlet.textSync("Talha AI" , {font:"Standard"})
     }
 
     printBannerWithShadow(ascii)
 
-    console.log(chalk.cyan("🚀 Welcome to Talha - Your AI Coding Assistant\n"));
+    console.log(chalk.cyan("🚀 Welcome to Talha AI - Your AI Coding Assistant\n"));
     
     await runCliMode()
 }

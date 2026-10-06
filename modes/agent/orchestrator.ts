@@ -1,4 +1,4 @@
-import { isCancel, text } from "@clack/prompts";
+import { isCancel, text, spinner } from "@clack/prompts";
 import chalk from "chalk";
 import { defaultAgentConfig } from './types.js';
 import { ActionTracker } from './action-tracker.js';
@@ -34,19 +34,20 @@ export async function runAgentMode() {
     tools,
   });
 
+  const s = spinner();
+  s.start("🤖 Agent is working on your task...");
+
   const result = await agent.generate({
     prompt: goal.trim(),
     onStepFinish: ({ toolCalls }) => {
       for (const tc of toolCalls) {
         const preview = JSON.stringify(tc.input).slice(0, 160);
-        console.log(
-          chalk.green("  ✓"),
-          chalk.bold(String(tc.toolName)),
-          chalk.dim(preview + (preview.length >= 160 ? "..." : "")),
-        );
+        s.message(`Using tool: ${tc.toolName}`);
       }
     },
   });
+
+  s.stop("✓ Task completed!");
 
   if (result.text?.trim()) console.log(renderTerminalMarkdown(result.text));
 

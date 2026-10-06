@@ -8,7 +8,7 @@ const program = new Command();
 
 program
   .name("talha")
-  .description("Talha - AI-powered coding assistant")
+  .description("Talha AI - AI-powered coding assistant")
   .version("0.0.1");
 
 program
@@ -17,5 +17,10 @@ program
   .action(async () => {
     await runWakeup()
   });
+
+// Default action - run wakeup if no command specified
+program.action(async () => {
+  await runWakeup()
+});
 
 await program.parseAsync(process.argv);
